@@ -17,6 +17,14 @@ public class Order {
     @JoinColumn(name = "productID", referencedColumnName = "productID")
     private Product product;
 
+    @ManyToOne
+    @JoinColumn(name = "supplierID", referencedColumnName = "supplierID")
+    private Supplier supplier;
+
+    @ManyToOne
+    @JoinColumn(name = "inventoryID", referencedColumnName = "inventory_id")
+    private Inventory inventory;
+
     @Column(name = "date")
     @Temporal(TemporalType.DATE)
     private Date date;
@@ -33,9 +41,11 @@ public class Order {
     public Order() {
     }
 
-    public Order(String orderID, Product product, Date date, Integer quantity, Double unitPrice, Double total) {
+    public Order(String orderID, Product product, Supplier supplier, Inventory inventory, Date date, Integer quantity, Double unitPrice, Double total) {
         this.orderID = orderID;
         this.product = product;
+        this.supplier = supplier;
+        this.inventory = inventory;
         this.date = date;
         this.quantity = quantity;
         this.unitPrice = unitPrice;

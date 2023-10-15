@@ -21,6 +21,10 @@ public class Sales {
     @JoinColumn(name = "customerID", referencedColumnName = "customerID")
     private Customer customer;
 
+    @ManyToOne
+    @JoinColumn(name = "inventoryID", referencedColumnName = "inventory_id")
+    private Inventory inventory;
+
     @Column(name = "date")
     @Temporal(TemporalType.DATE) // Needed for Date type
     private Date date;
@@ -37,10 +41,11 @@ public class Sales {
     public Sales() {
     }
 
-    public Sales(String salesID, Product product, Customer customer, Date date, Integer quantity, Double unitPrice, Double total) {
+    public Sales(String salesID, Product product, Customer customer,Inventory inventory, Date date, Integer quantity, Double unitPrice, Double total) {
         this.salesID = salesID;
         this.product = product;
         this.customer = customer;
+        this.inventory = inventory;
         this.date = date;
         this.quantity = quantity;
         this.unitPrice = unitPrice;

@@ -3,17 +3,52 @@ package com.example.InventoryManagementSystem.Models;
 import jakarta.persistence.*;
 import jakarta.persistence.Id;
 
+import java.io.Serializable;
+
+@Embeddable
+class InventoryProductKey implements Serializable {
+    @Column(name = "productID")
+    private String productId;
+
+    @Column(name = "inventoryID")
+    private String inventoryId;
+
+    public InventoryProductKey(String productId, String inventoryId) {
+        this.productId = productId;
+        this.inventoryId = inventoryId;
+    }
+
+    public String getProductId() {
+        return productId;
+    }
+
+    public void setProductId(String productId) {
+        this.productId = productId;
+    }
+
+    public String getInventoryId() {
+        return inventoryId;
+    }
+
+    public void setInventoryId(String inventoryId) {
+        this.inventoryId = inventoryId;
+    }
+}
+
 @Entity
 @Table(name = "InventoryProduct")
 public class InventoryProduct {
-    @Id
-    @ManyToOne
-    @JoinColumn(name = "productID", referencedColumnName = "productID")
-    private Product productId;
+    @EmbeddedId
+    private InventoryProductKey id;
 
-    @Id
     @ManyToOne
-    @JoinColumn(name = "inventoryID", referencedColumnName = "inventory_id")
+    @MapsId("productId")
+    @JoinColumn(name = "productID")
+    private Product product;
+
+    @ManyToOne
+    @MapsId("inventoryId")
+    @JoinColumn(name = "inventoryID")
     private Inventory inventory;
 
     @Column(name = "availableQuantity")
@@ -22,18 +57,27 @@ public class InventoryProduct {
     public InventoryProduct() {
     }
 
-    public InventoryProduct(Product productId, Inventory inventory, Integer availableQuantity) {
-        this.productId = productId;
+    public InventoryProduct(InventoryProductKey id, Product product, Inventory inventory, Integer availableQuantity) {
+        this.id = id;
+        this.product = product;
         this.inventory = inventory;
         this.availableQuantity = availableQuantity;
     }
 
-    public Product getProductId() {
-        return productId;
+    public InventoryProductKey getId() {
+        return id;
     }
 
-    public void setProductId(Product productId) {
-        this.productId = productId;
+    public void setId(InventoryProductKey id) {
+        this.id = id;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     public Inventory getInventory() {

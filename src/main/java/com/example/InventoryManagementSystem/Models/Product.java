@@ -11,7 +11,7 @@ public class Product {
 
     @Id
     @Column(name = "productID", nullable = false, length = 50)
-    private String productID;
+    private String productId;
 
     @Column(name = "productName", length = 255)
     private String productName;
@@ -25,18 +25,18 @@ public class Product {
     public Product(){}
 
     public Product(String productID, String productName, Double unitPrice, String description) {
-        this.productID = productID;
+        this.productId = productID;
         this.productName = productName;
         this.unitPrice = unitPrice;
         this.description = description;
     }
 
-    public String getProductID() {
-        return productID;
+    public String getProductId() {
+        return productId;
     }
 
-    public void setProductID(String productID) {
-        this.productID = productID;
+    public void setProductId(String productId) {
+        this.productId = productId;
     }
 
     public String getProductName() {
@@ -66,7 +66,7 @@ public class Product {
     @Override
     public String toString() {
         return "Product{" +
-                "productID='" + productID + '\'' +
+                "productID='" + productId + '\'' +
                 ", productName='" + productName + '\'' +
                 ", unitPrice=" + unitPrice +
                 ", description='" + description + '\'' +
