@@ -5,12 +5,12 @@ import java.util.List;
 public class ChartRevenueCostDTO {
     private String name;
     private String type = "column";
-    private List<Double> transactions;
+    private List<Double> data;
 
-    public ChartRevenueCostDTO(String name, String type, List<Double> transactions) {
+    public ChartRevenueCostDTO(String name, String type, List<Double> data) {
         this.name = name;
         this.type = type;
-        this.transactions = transactions;
+        this.data = data;
     }
 
     public String getName() {
@@ -29,11 +29,11 @@ public class ChartRevenueCostDTO {
         this.type = type;
     }
 
-    public List<Double> getTransactions() {
-        return transactions;
+    public List<Double> getData() {
+        return data;
     }
 
-    public void setTransactions(List<Double> transactions) {
-        this.transactions = transactions;
+    public void setData(List<Double> data) {
+        this.data = data;
     }
 }
