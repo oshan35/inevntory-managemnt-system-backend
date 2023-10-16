@@ -1,17 +1,22 @@
 package com.example.InventoryManagementSystem.Controllers;
 
+import com.example.InventoryManagementSystem.DataTransferObjectClasses.ChartRevenueCostDTO;
+import com.example.InventoryManagementSystem.DataTransferObjectClasses.InventoryLoginDTO;
+import com.example.InventoryManagementSystem.DataTransferObjectClasses.NearestAvailableInventoryDTO;
 import com.example.InventoryManagementSystem.Models.Inventory;
-import com.example.InventoryManagementSystem.Models.Transaction;
+import com.example.InventoryManagementSystem.DataTransferObjectClasses.Transaction;
 import com.example.InventoryManagementSystem.Services.InventoryService;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
+@RequestMapping("/api/inventory")
 public class InventoryController {
 
     private InventoryService inventoryService;
@@ -27,6 +32,16 @@ public class InventoryController {
         return ResponseEntity.ok(newInventory);
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<String> inventoryLoginAuthentication(@RequestBody InventoryLoginDTO inventoryLoginDTO){
+        Pair<String, Boolean> response = inventoryService.authenticateLogin(inventoryLoginDTO.getInventoryUserName(),inventoryLoginDTO.getInventoryPassword());
+        if (response.getValue()) {
+            return ResponseEntity.ok(response.getKey());
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed");
+        }
+    }
+
     @GetMapping("/transactions/{inventoryID}")
     public ResponseEntity<List<Transaction>> getAllTransactions(@RequestParam String inventoryID){
         List<Transaction> transactions = inventoryService.getAllTransactions(inventoryID);
@@ -35,12 +50,18 @@ public class InventoryController {
     }
 
     @GetMapping("/by-productID/{inventoryId}/{productId}")
-    public ResponseEntity<ArrayList<Map<String,String>>> getInventoriesByProduct(
+    public ResponseEntity<List<NearestAvailableInventoryDTO>> getInventoriesByProduct(
             @PathVariable String inventoryId,
             @PathVariable String productId){
-        ArrayList<Map<String,String>> inventories = inventoryService.getNearestInventries(inventoryId, productId);
+        List<NearestAvailableInventoryDTO> inventories = inventoryService.getNearestInventries(inventoryId, productId);
         return ResponseEntity.ok(inventories);
     }
 
+    @GetMapping("/cost-Revenue/{inventoryId}")
+    public ResponseEntity<List<ChartRevenueCostDTO>> getCostRevenueData(@PathVariable String inventoryId){
+        List<ChartRevenueCostDTO> costRevenueData = inventoryService.getCostRevenueChartData(inventoryId);
+
+        return ResponseEntity.ok(costRevenueData);
+    }
 
 }

@@ -1,16 +1,20 @@
 package com.example.InventoryManagementSystem.Controllers;
 
+import com.example.InventoryManagementSystem.DataTransferObjectClasses.AdminLoginDTO;
 import com.example.InventoryManagementSystem.Models.Admin;
 import com.example.InventoryManagementSystem.Models.Inventory;
 import com.example.InventoryManagementSystem.Services.AdminService;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/admin")
 public class AdminController {
@@ -24,10 +28,10 @@ public class AdminController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody Admin admin){
-        boolean isAuthenticated = adminService.authenticate(admin.getAdminUserName(), admin.getPassword());
-        if (isAuthenticated) {
-            return ResponseEntity.ok("Logged in successfully");
+    public ResponseEntity<String> login(@RequestBody AdminLoginDTO admin){
+        Pair<String, Boolean> auth = adminService.authenticate(admin.getAdminUserName(), admin.getAdminPassword());
+        if (auth.getValue()) {
+            return ResponseEntity.ok(auth.getKey());
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed");
         }

@@ -1,13 +1,17 @@
 package com.example.InventoryManagementSystem.Services;
 
+import com.example.InventoryManagementSystem.DataTransferObjectClasses.ChartRevenueCostDTO;
+import com.example.InventoryManagementSystem.DataTransferObjectClasses.NearestAvailableInventoryDTO;
 import com.example.InventoryManagementSystem.Models.Inventory;
 import com.example.InventoryManagementSystem.Models.Order;
 import com.example.InventoryManagementSystem.Models.Sales;
-import com.example.InventoryManagementSystem.Models.Transaction;
+import com.example.InventoryManagementSystem.DataTransferObjectClasses.Transaction;
 import com.example.InventoryManagementSystem.Repositories.InventoryProductRepository;
 import com.example.InventoryManagementSystem.Repositories.InventoryRepository;
 import com.example.InventoryManagementSystem.Repositories.OrdersRepository;
 import com.example.InventoryManagementSystem.Repositories.SalesRepository;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,11 +27,10 @@ public class InventoryService {
 
     @Autowired
     public InventoryService(InventoryRepository inventoryRepository,OrdersRepository ordersRepository, SalesRepository salesRepository, InventoryProductRepository inventoryProductRepository){
-
-        this.inventoryRepository = inventoryRepository;
         this.salesRepository = salesRepository;
         this.ordersRepository = ordersRepository;
         this.inventoryRepository = inventoryRepository;
+        this.inventoryProductRepository = inventoryProductRepository;
     }
 
 
@@ -35,6 +38,14 @@ public class InventoryService {
         return inventoryRepository.save(inventory);
     }
 
+    public Pair<String, Boolean> authenticateLogin(String userName, String password){
+        Optional<Inventory> inventoryOpt = inventoryRepository.findInventoryByUserNameAndPassword(userName,password);
+        String inventoryId = inventoryRepository.findInventory(userName,password);
+
+        Pair<String, Boolean> res = new ImmutablePair<>(inventoryId,inventoryOpt.isPresent());
+        return res;
+
+    }
 
     public List<Transaction> getAllTransactions(String inventoryID){
         List<Order> orders = ordersRepository.findAllByInventoryId(inventoryID);
@@ -58,14 +69,11 @@ public class InventoryService {
     public static double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
         final double EARTH_RADIUS = 6371;
 
-
-        // Convert degrees to radians
         lat1 = Math.toRadians(lat1);
         lon1 = Math.toRadians(lon1);
         lat2 = Math.toRadians(lat2);
         lon2 = Math.toRadians(lon2);
 
-        // Apply Haversine formula
         double latDifference = lat2 - lat1;
         double lonDifference = lon2 - lon1;
 
@@ -78,25 +86,48 @@ public class InventoryService {
         return EARTH_RADIUS * c;
     }
 
-    public ArrayList<Map<String,String>>getNearestInventries(String inventoryID, String productID){
+    public List<NearestAvailableInventoryDTO> getNearestInventries(String inventoryID, String productID){
         List<Inventory> availableInventoryList = inventoryRepository.findInventoriesByProductId(productID);
         Inventory currentInventory = inventoryRepository.findInventoryByInventoryId(inventoryID);
 
-        ArrayList<Map<String,String>> inventorySearchResult = new ArrayList<Map<String,String>>();
+        List<NearestAvailableInventoryDTO> nearestAvailableInventoryDTOList = new ArrayList<>();
 
         for (Inventory inventory:availableInventoryList){
-            Map<String,String> inventoryObj = new HashMap<>();
-            double distance = calculateDistance(currentInventory.getLatitude(),currentInventory.getLongitude(),inventory.getLatitude(),inventory.getLongitude());
-            int quantity = inventoryProductRepository.findQuantityByInventoryAndProductId(inventory.getInventoryId(),productID);
-            inventoryObj.put("inventoryId",inventory.getInventoryId());
-            inventoryObj.put("productId",productID);
-            inventoryObj.put("location",inventory.getOfficialAddress());
-            inventoryObj.put("distance",String.valueOf(distance));
-            inventoryObj.put("Quantity",String.valueOf(quantity));
 
-            inventorySearchResult.add(inventoryObj);
+            double distance = calculateDistance(currentInventory.getLatitude(),currentInventory.getLongitude(),inventory.getLatitude(),inventory.getLongitude());
+            int quantity = inventoryProductRepository.findQuantityByInventoryAndProductId(productID,inventory.getInventoryId());
+            NearestAvailableInventoryDTO newDTO = new NearestAvailableInventoryDTO(inventory.getInventoryId(),productID,inventory.getOfficialAddress(),distance,quantity);
+
+            nearestAvailableInventoryDTOList.add(newDTO);
 
         }
-        return inventorySearchResult;
+        return nearestAvailableInventoryDTOList;
+    }
+
+    public List<ChartRevenueCostDTO> getCostRevenueChartData(String inventoryID){
+        List<Object[]> costListGroupedByMonth = ordersRepository.findTotalOrderByMonthForInventory(inventoryID);
+        List<Object[]> salesListGroupedByMonth = salesRepository.findTotalSalesByMonthForInventory(inventoryID);
+
+        List<ChartRevenueCostDTO> costRevaue = new ArrayList<ChartRevenueCostDTO>();
+
+        List<Double> costList = new ArrayList<>();
+        List<Double> salesList = new ArrayList<>();
+
+        for (Object[] cost:costListGroupedByMonth){
+            costList.add((Double) cost[0]);
+        }
+
+        for (Object[] sales:salesListGroupedByMonth){
+            salesList.add((Double) sales[0]);
+        }
+
+        ChartRevenueCostDTO cost = new ChartRevenueCostDTO("Cost","column",costList);
+
+        ChartRevenueCostDTO sales = new ChartRevenueCostDTO("Revenue","column",salesList);
+
+        costRevaue.add(sales);
+        costRevaue.add(cost);
+
+        return costRevaue;
     }
 }

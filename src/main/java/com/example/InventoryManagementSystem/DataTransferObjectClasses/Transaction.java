@@ -1,6 +1,4 @@
-package com.example.InventoryManagementSystem.Models;
-
-import jakarta.persistence.*;
+package com.example.InventoryManagementSystem.DataTransferObjectClasses;
 
 import java.util.Date;
 
