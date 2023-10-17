@@ -1,10 +1,7 @@
 package com.example.InventoryManagementSystem.Controllers;
 
-import com.example.InventoryManagementSystem.DataTransferObjectClasses.ChartRevenueCostDTO;
-import com.example.InventoryManagementSystem.DataTransferObjectClasses.InventoryLoginDTO;
-import com.example.InventoryManagementSystem.DataTransferObjectClasses.NearestAvailableInventoryDTO;
+import com.example.InventoryManagementSystem.DataTransferObjectClasses.*;
 import com.example.InventoryManagementSystem.Models.Inventory;
-import com.example.InventoryManagementSystem.DataTransferObjectClasses.Transaction;
 import com.example.InventoryManagementSystem.Services.InventoryService;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +40,7 @@ public class InventoryController {
     }
 
     @GetMapping("/transactions/{inventoryID}")
-    public ResponseEntity<List<Transaction>> getAllTransactions(@RequestParam String inventoryID){
+    public ResponseEntity<List<Transaction>> getAllTransactions(@PathVariable String inventoryID){
         List<Transaction> transactions = inventoryService.getAllTransactions(inventoryID);
 
         return ResponseEntity.ok(transactions);
@@ -63,5 +60,6 @@ public class InventoryController {
 
         return ResponseEntity.ok(costRevenueData);
     }
+
 
 }

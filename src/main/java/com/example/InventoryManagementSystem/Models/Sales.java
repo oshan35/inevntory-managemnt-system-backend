@@ -107,4 +107,12 @@ public class Sales {
     public void setTotal(Double total) {
         this.total = total;
     }
+
+    public Inventory getInventory() {
+        return inventory;
+    }
+
+    public void setInventory(Inventory inventory) {
+        this.inventory = inventory;
+    }
 }

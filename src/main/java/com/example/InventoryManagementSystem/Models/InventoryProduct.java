@@ -13,6 +13,9 @@ class InventoryProductKey implements Serializable {
     @Column(name = "inventoryID")
     private String inventoryId;
 
+    public InventoryProductKey() {
+    }
+
     public InventoryProductKey(String productId, String inventoryId) {
         this.productId = productId;
         this.inventoryId = inventoryId;
@@ -58,6 +61,13 @@ public class InventoryProduct {
     }
 
     public InventoryProduct(InventoryProductKey id, Product product, Inventory inventory, Integer availableQuantity) {
+        this.id = id;
+        this.product = product;
+        this.inventory = inventory;
+        this.availableQuantity = availableQuantity;
+    }
+
+    public InventoryProduct( Product product, Inventory inventory, Integer availableQuantity) {
         this.id = id;
         this.product = product;
         this.inventory = inventory;

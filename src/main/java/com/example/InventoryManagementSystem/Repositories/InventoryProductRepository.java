@@ -10,4 +10,8 @@ public interface InventoryProductRepository extends JpaRepository<InventoryProdu
     @Query("SELECT availableQuantity FROM InventoryProduct ip WHERE ip.product.productId = :productId AND ip.inventory.inventoryId = :inventoryId")
     int findQuantityByInventoryAndProductId(@Param("productId") String productId, @Param("inventoryId") String inventoryId);
 
+    @Query("SELECT ip FROM InventoryProduct ip WHERE ip.product.productId = :productId AND ip.inventory.inventoryId = :inventoryId")
+    InventoryProduct findInventoryProduct(@Param("productId") String productId, @Param("inventoryId") String inventoryId);
+
+
 }
