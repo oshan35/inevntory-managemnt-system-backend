@@ -1,16 +1,25 @@
 package com.example.InventoryManagementSystem.DataTransferObjectClasses;
 
-import com.example.InventoryManagementSystem.Models.Product;
-
 public class NewProductDTO {
 
     private String inventoryId;
 
-    private Product product;
+    private String productId;
 
-    public NewProductDTO(String inventoryId, Product product) {
+
+    private String productName;
+
+
+    private Double unitPrice;
+
+    private String description;
+
+    public NewProductDTO(String inventoryId, String productID, String productName, Double unitPrice, String description) {
         this.inventoryId = inventoryId;
-        this.product = product;
+        this.productId = productID;
+        this.productName = productName;
+        this.unitPrice = unitPrice;
+        this.description = description;
     }
 
     public String getInventoryId() {
@@ -21,11 +30,35 @@ public class NewProductDTO {
         this.inventoryId = inventoryId;
     }
 
-    public Product getProduct() {
-        return product;
+    public String getProductId() {
+        return productId;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public void setProductId(String productId) {
+        this.productId = productId;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public Double getUnitPrice() {
+        return unitPrice;
+    }
+
+    public void setUnitPrice(Double unitPrice) {
+        this.unitPrice = unitPrice;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

@@ -1,6 +1,8 @@
 package com.example.InventoryManagementSystem.Controllers;
 
 import com.example.InventoryManagementSystem.DataTransferObjectClasses.AdminLoginDTO;
+import com.example.InventoryManagementSystem.DataTransferObjectClasses.InventoryDTO;
+import com.example.InventoryManagementSystem.DataTransferObjectClasses.InventoryTableDTO;
 import com.example.InventoryManagementSystem.Models.Admin;
 import com.example.InventoryManagementSystem.Models.Inventory;
 import com.example.InventoryManagementSystem.Services.AdminService;
@@ -41,5 +43,19 @@ public class AdminController {
     public ResponseEntity<List<Inventory>> getAdminInventories(@RequestParam String adminID){
         List<Inventory> inventoryList = adminService.getAdminInventory(adminID);
         return ResponseEntity.ok(inventoryList);
+    }
+
+    @PostMapping("/new-inventory")
+    public ResponseEntity<?> addNewInventory(@RequestBody InventoryDTO inventory){
+        Inventory response =adminService.addNewInventory(inventory);
+        return ResponseEntity.ok(response);
+    }
+
+
+    @GetMapping("/inventory/{adminId}")
+    public ResponseEntity<?> getInventoryDataByAdminId(@PathVariable String adminId){
+        List<InventoryTableDTO> response = adminService.getAllInventoriesByAminId(adminId);
+
+        return ResponseEntity.ok(response);
     }
 }

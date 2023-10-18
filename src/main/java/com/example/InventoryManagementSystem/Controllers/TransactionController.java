@@ -20,8 +20,8 @@ public class TransactionController {
     }
 
     @PostMapping("/add-new-transaction")
-    public ResponseEntity<Transaction> addNewTransaction(@RequestBody TransactionDTO transactionDTO){
-        Transaction response = transactionService.addTransaction(transactionDTO);
+    public ResponseEntity<TransactionDTO> addNewTransaction(@RequestBody TransactionDTO transactionDTO){
+        TransactionDTO response = transactionService.addTransaction(transactionDTO);
         if (response !=null){
             System.out.println("Transaction Saved");
             return ResponseEntity.ok(response);

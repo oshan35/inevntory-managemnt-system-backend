@@ -61,5 +61,4 @@ public class InventoryController {
         return ResponseEntity.ok(costRevenueData);
     }
 
-
 }

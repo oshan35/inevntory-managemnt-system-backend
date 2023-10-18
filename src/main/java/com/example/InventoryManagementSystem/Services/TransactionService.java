@@ -25,41 +25,40 @@ public class TransactionService {
     }
 
 
-    public Transaction addTransaction(TransactionDTO transaction){
-        Transaction requestBody = transaction.getTransaction();
-        Product product = productRepository.findProductByProductId(requestBody.getProduct());
-        InventoryProduct inventoryProduct = inventoryProductRepository.findInventoryProduct(requestBody.getProduct(),transaction.getInventoryId());
+    public TransactionDTO addTransaction(TransactionDTO transaction){
+        Product product = productRepository.findProductByProductId(transaction.getProductID());
+        InventoryProduct inventoryProduct = inventoryProductRepository.findInventoryProduct(transaction.getProductID(),transaction.getInventoryId());
         Inventory inventory = inventoryRepository.findInventoryByInventoryId(transaction.getInventoryId());
-        if (requestBody.getType().equals("Buy")){
+        if (transaction.getType().equals("Buy")){
             Order newOrder = new Order();
-            newOrder.setOrderID(requestBody.getTransactionID());
+            newOrder.setOrderID(transaction.getTransactionID());
             newOrder.setProduct(product);
             newOrder.setInventory(inventory);
-            newOrder.setDate(requestBody.getDate());
-            newOrder.setQuantity(requestBody.getQuantity());
-            newOrder.setUnitPrice(requestBody.getUnitPrice());
-            newOrder.setTotal(requestBody.getTotal());
+            newOrder.setDate(transaction.getDate());
+            newOrder.setQuantity(transaction.getQuantity());
+            newOrder.setUnitPrice(transaction.getUnitPrice());
+            newOrder.setTotal(transaction.getTotal());
 
-            inventoryProduct.setAvailableQuantity(inventoryProduct.getAvailableQuantity()+requestBody.getQuantity());
+            inventoryProduct.setAvailableQuantity(inventoryProduct.getAvailableQuantity()+transaction.getQuantity());
             inventoryProductRepository.save(inventoryProduct);
             ordersRepository.save(newOrder);
 
-            return transaction.getTransaction();
-        }else if (requestBody.getType().equals("Sell")){
-            if (inventoryProduct.getAvailableQuantity()>requestBody.getQuantity()){
+            return transaction;
+        }else if (transaction.getType().equals("Sell")){
+            if (inventoryProduct.getAvailableQuantity()>transaction.getQuantity()){
                 Sales newSale = new Sales();
-                newSale.setSalesID(requestBody.getTransactionID());
+                newSale.setSalesID(transaction.getTransactionID());
                 newSale.setProduct(product);
                 newSale.setInventory(inventory);
-                newSale.setDate(requestBody.getDate());
-                newSale.setQuantity(requestBody.getQuantity());
-                newSale.setUnitPrice(requestBody.getUnitPrice());
-                newSale.setTotal(requestBody.getTotal());
+                newSale.setDate(transaction.getDate());
+                newSale.setQuantity(transaction.getQuantity());
+                newSale.setUnitPrice(transaction.getUnitPrice());
+                newSale.setTotal(transaction.getTotal());
 
-                inventoryProduct.setAvailableQuantity(inventoryProduct.getAvailableQuantity() - requestBody.getQuantity());
+                inventoryProduct.setAvailableQuantity(inventoryProduct.getAvailableQuantity() - transaction.getQuantity());
                 inventoryProductRepository.save(inventoryProduct);
                 salesRepository.save(newSale);
-                return transaction.getTransaction();
+                return transaction;
             }else{
                 System.out.println("Transaction failed due to insufficient inventory");
                 return null;

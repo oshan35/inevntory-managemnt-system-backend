@@ -37,4 +37,19 @@ public class ProductController {
        return ResponseEntity.ok(response);
     }
 
+    @DeleteMapping("/delete-product/{productId}")
+    public ResponseEntity<?> deleteProduct(@PathVariable String productId) {
+        Product response = productService.deleteProduct(productId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/update/{productId}")
+    public ResponseEntity<Product> updateProduct(@PathVariable String productId, @RequestBody NewProductDTO updatedProductDetails) {
+        Product updatedProduct = productService.updateProduct(productId, updatedProductDetails);
+        if (updatedProduct == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(updatedProduct);
+    }
+
 }
