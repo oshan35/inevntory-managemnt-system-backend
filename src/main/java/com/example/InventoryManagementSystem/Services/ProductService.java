@@ -30,17 +30,22 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public Product createProduct(NewProductDTO newProduct){
+    public NewProductDTO createProduct(NewProductDTO newProduct){
         System.out.println(newProduct.getProductId());
-        Product product = new Product(newProduct.getProductId(),newProduct.getProductName(), newProduct.getUnitPrice(), newProduct.getDescription());
         Inventory inventory = inventoryRepository.findInventoryByInventoryId(newProduct.getInventoryId());
-        productRepository.save(product);
 
-        InventoryProduct inventoryProduct = new InventoryProduct(new InventoryProductKey(product.getProductId(), inventory.getInventoryId()),product,inventory,10);
         //System.out.println("TEST: "+inventoryProduct.getInventory().getInventoryId());
-        inventoryProductRepository.save(inventoryProduct);
 
-        return product;
+        if(productRepository.existsByProductId(newProduct.getProductId())){
+            Product exisitingProduct = productRepository.findProductByProductId(newProduct.getProductId());
+            InventoryProduct inventoryProduct = new InventoryProduct(new InventoryProductKey(newProduct.getProductId(), inventory.getInventoryId()),exisitingProduct,inventory,10);
+            inventoryProductRepository.save(inventoryProduct);
+        }else{
+            Product product = new Product(newProduct.getProductId(),newProduct.getProductName(), newProduct.getUnitPrice(), newProduct.getDescription());
+            productRepository.save(product);
+        }
+
+        return newProduct;
     }
 
     public List<Product> productList(String inventoryId){

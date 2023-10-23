@@ -82,8 +82,8 @@ public class InventoryService {
                 * Math.pow(Math.sin(lonDifference / 2),2);
 
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-
-        return EARTH_RADIUS * c;
+        double val = Math.round(EARTH_RADIUS * c)/100.0;
+        return val;
     }
 
     public List<NearestAvailableInventoryDTO> getNearestInventries(String inventoryID, String productID){
